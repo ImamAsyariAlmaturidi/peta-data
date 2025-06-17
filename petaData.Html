@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Peta Data Indonesia</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+  />
+  <style>
+    #map {
+      height: 90vh;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <h2>Peta Data Sektor di Indonesia</h2>
+  <div id="map"></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+  <script>
+    const map = L.map('map').setView([-7.2, 111], 7);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+      attribution: '© OpenStreetMap contributors',
+    }).addTo(map);
+
+    function loadGeoJSON(data, style, popupProp) {
+      L.geoJSON(data, {
+        style: style,
+        onEachFeature: function (feature, layer) {
+          if (feature.properties && feature.properties[popupProp]) {
+            layer.bindPopup(popupProp + ': ' + feature.properties[popupProp]);
+          }
+        },
+        pointToLayer: function(feature, latlng) {
+          return L.circleMarker(latlng, {
+            radius: 8,
+            fillColor: style.color,
+            color: style.color,
+            weight: 1,
+            opacity: 1,
+            fillOpacity: 0.8
+          });
+        }
+      }).addTo(map);
+    }
+
+    // Contoh data GeoJSON sederhana
+
+    const pertanian = {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "properties": {"nama": "Lahan Pertanian A"},
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [[[110.0, -7.0], [110.1, -7.0], [110.1, -6.9], [110.0, -6.9], [110.0, -7.0]]]
+          }
+        }
+      ]
+    };
+
+    const peternakan = {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "properties": {"nama": "Peternakan B"},
+          "geometry": {
+            "type": "Point",
+            "coordinates": [111.0, -7.5]
+          }
+        }
+      ]
+    };
+
+    const perkebunan = {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "properties": {"nama": "Perkebunan C"},
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [[[111.5, -7.3], [111.7, -7.3], [111.7, -7.1], [111.5, -7.1], [111.5, -7.3]]]
+          }
+        }
+      ]
+    };
+
+    const kawasan_industri = {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "properties": {"nama": "Kawasan Industri D"},
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [[[112.0, -7.7], [112.3, -7.7], [112.3, -7.4], [112.0, -7.4], [112.0, -7.7]]]
+          }
+        }
+      ]
+    };
+
+    // Style tiap layer
+    const stylePertanian = { color: 'green', weight: 2, fillOpacity: 0.3 };
+    const stylePeternakan = { color: 'brown', weight: 2, fillOpacity: 0.3 };
+    const stylePerkebunan = { color: 'orange', weight: 2, fillOpacity: 0.3 };
+    const styleKawasanIndustri = { color: 'red', weight: 2, fillOpacity: 0.3 };
+
+    // Load data ke peta
+    loadGeoJSON(pertanian, stylePertanian, 'nama');
+    loadGeoJSON(peternakan, stylePeternakan, 'nama');
+    loadGeoJSON(perkebunan, stylePerkebunan, 'nama');
+    loadGeoJSON(kawasan_industri, styleKawasanIndustri, 'nama');
+
+  </script>
+</body>
+</html>
